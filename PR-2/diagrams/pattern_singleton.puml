@@ -1,0 +1,23 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class "PaymentConfig" as PaymentConfig <<singleton>> <<struct>> {
+    -provider string
+    -apiURL string
+    -timeoutSec int
+    {static} -instance *PaymentConfig
+    {static} -once sync.Once
+    {static} +GetInstance() *PaymentConfig
+    +SetProvider(provider string)
+    +GetProvider() string
+    +GetAPIURL() string
+}
+
+class "OrderProcessor" as OrderProcessor <<struct>> {
+    -config *PaymentConfig
+    +NewOrderProcessor() *OrderProcessor
+    +PrintConfig()
+}
+
+OrderProcessor --> PaymentConfig : uses
+@enduml

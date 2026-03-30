@@ -1,0 +1,34 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+interface "PaymentStrategy" as PaymentStrategy <<interface>> {
+    +Pay(amount float64) string
+}
+
+class "OrderProcessor" as OrderProcessor <<struct>> {
+    -strategy PaymentStrategy
+    -orderID int
+    -total float64
+    +SetStrategy(strategy PaymentStrategy)
+    +Checkout() string
+}
+
+class "CardPayment" as CardPayment <<struct>> {
+    -cardNumber string
+    +Pay(amount float64) string
+}
+
+class "CashPayment" as CashPayment <<struct>> {
+    +Pay(amount float64) string
+}
+
+class "SBPPayment" as SBPPayment <<struct>> {
+    -phone string
+    +Pay(amount float64) string
+}
+
+PaymentStrategy <|.. CardPayment
+PaymentStrategy <|.. CashPayment
+PaymentStrategy <|.. SBPPayment
+OrderProcessor --> PaymentStrategy : uses
+@enduml
