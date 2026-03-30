@@ -1,0 +1,43 @@
+@startuml
+actor "Клиент" as User
+participant "Web UI" as UI
+participant "Order Service" as OrderSvc
+participant "Payment Service" as PaySvc
+database "Database" as DB
+
+User -> UI : Нажать "Оформить заказ"
+activate UI
+
+UI -> OrderSvc : CreateOrder(cartItems)
+activate OrderSvc
+
+OrderSvc -> DB : Сохранить заказ (status=pending)
+activate DB
+DB --> OrderSvc : OrderID
+deactivate DB
+
+OrderSvc --> UI : OrderID, TotalAmount
+deactivate OrderSvc
+
+UI -> User : Запрос данных карты
+
+User -> UI : Ввод данных карты
+UI -> PaySvc : ProcessPayment(OrderID, Amount, CardData)
+activate PaySvc
+
+alt Оплата успешна
+    PaySvc -> OrderSvc : MarkAsPaid(OrderID)
+    activate OrderSvc
+    OrderSvc -> DB : Update status=paid
+    OrderSvc --> PaySvc : OK
+    deactivate OrderSvc
+    PaySvc --> UI : Payment Success
+    UI --> User : "Заказ принят! Готовим еду"
+else Ошибка оплаты
+    PaySvc --> UI : Error: Insufficient funds
+    deactivate PaySvc
+    UI --> User : "Ошибка оплаты. Попробуйте другую карту"
+end
+
+deactivate UI
+@enduml

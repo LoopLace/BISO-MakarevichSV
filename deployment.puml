@@ -1,0 +1,30 @@
+@startuml
+node "User Device" {
+    [Browser / Mobile App] as Client
+}
+
+node "Cloud Server (AWS)" {
+    node "Web Server (Nginx)" {
+        artifact "Frontend Bundle"
+    }
+    
+    node "App Server (Docker)" {
+        artifact "Order-Service.exe"
+        artifact "Auth-Service.exe"
+    }
+    
+    node "Database Server" {
+        artifact "PostgreSQL 16"
+    }
+}
+
+node "Payment Provider (Stripe)" {
+    [Payment API] as Stripe
+}
+
+Client --> "Web Server (Nginx)" : HTTPS (443)
+"Web Server (Nginx)" --> "Order-Service.exe" : Proxy Pass
+"Order-Service.exe" --> "PostgreSQL 16" : Port 5432
+"Order-Service.exe" --> Stripe : HTTPS/TLS
+
+@enduml

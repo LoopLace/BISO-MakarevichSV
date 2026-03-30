@@ -1,0 +1,61 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+interface "PaymentGateway" as PaymentGateway <<interface>> {
+    +ProcessPayment(amount float64) bool
+}
+
+class "User" as User <<struct>> {
+    #ID: int
+    #Login: string
+    #PasswordHash: string
+    +GetProfile(): string
+}
+
+class "Customer" as Customer <<struct>> {
+    -Address: string
+    -BonusBalance: int
+    +PlaceOrder(cart Cart) Order
+}
+
+class "Order" as Order <<struct>> {
+    -ID: int
+    -Status: string
+    -TotalPrice: float64
+    +UpdateStatus(newStatus string)
+    +CalculateTotal(): float64
+}
+
+class "OrderItem" as OrderItem <<struct>> {
+    -DishID: int
+    -Quantity: int
+    -Price: float64
+}
+
+class "Dish" as Dish <<struct>> {
+    -Name: string
+    -Description: string
+    -Price: float64
+    +IsAvailable(): bool
+}
+
+class "Cart" as Cart <<struct>> {
+    -Items: []OrderItem
+    +AddItem(item OrderItem)
+    +Clear()
+}
+
+class "CardPayment" as CardPayment <<struct>> {
+    -CardNumber: string
+    +ProcessPayment(amount float64) bool
+}
+
+User <|-- Customer : встраивание
+Customer "1" *-- "1" Cart : владеет
+Order "1" *-- "many" OrderItem : содержит
+OrderItem --> Dish : ссылается
+Customer "1" -- "many" Order : делает
+CardPayment ..|> PaymentGateway : реализует
+Order ..> PaymentGateway : использует для оплаты
+
+@enduml

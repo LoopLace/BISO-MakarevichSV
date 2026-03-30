@@ -1,0 +1,28 @@
+@startuml
+package "Frontend Layer" {
+  [Mobile App] as Mobile
+  [React Web Dashboard] as Web
+}
+
+package "API Gateway / Backend" {
+  [Order Service] as Orders
+  [Auth Service] as Auth
+  [Menu Service] as Menu
+}
+
+package "External Services" {
+  [Stripe API] as Payment
+}
+
+database "PostgreSQL (Main DB)" as DB
+database "Redis (Cache)" as Cache
+
+Mobile --> Auth : HTTPS/JSON
+Web --> Auth : HTTPS/JSON
+Auth --> Orders : gRPC
+Orders --> DB : SQL
+Orders --> Payment : REST API
+Menu --> Cache : TCP
+Orders --> Menu : gRPC
+
+@enduml

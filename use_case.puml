@@ -1,0 +1,38 @@
+@startuml
+left to right direction
+skinparam actorStyle awesome
+
+actor "Клиент" as Customer
+actor "Администратор" as Admin
+actor "Повар" as Chef
+actor "Курьер" as Courier
+
+rectangle "Система доставки еды" {
+    usecase "Регистрация" as UC1
+    usecase "Вход в систему" as UC2
+    usecase "Аутентификация" as UC3
+    usecase "Просмотр меню" as UC4
+    usecase "Оформление заказа" as UC5
+    usecase "Оплата заказа" as UC6
+    usecase "Управление меню" as UC7
+    usecase "Приготовление блюд" as UC8
+    usecase "Доставка заказа" as UC9
+    usecase "Начисление бонусов" as UC10
+}
+
+Customer --> UC1
+Customer --> UC2
+Customer --> UC4
+Customer --> UC5
+
+UC2 ..> UC3 : <<include>>
+UC5 ..> UC3 : <<include>>
+UC5 ..> UC6 : <<include>>
+UC6 <.. UC10 : <<extend>>
+
+Admin --> UC7
+Admin --> UC3
+Chef --> UC8
+Courier --> UC9
+
+@enduml
