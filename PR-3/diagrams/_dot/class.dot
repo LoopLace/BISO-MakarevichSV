@@ -1,0 +1,34 @@
+
+digraph G {
+  graph [rankdir=LR, splines=ortho, nodesep=0.5, ranksep=0.8, pad=0.2];
+  node [shape=record, fontsize=11, fontname="DejaVu Sans"];
+  edge [fontsize=10, fontname="DejaVu Sans"];
+
+  Operation [label="{Operation (interface)|+ Name() string\l+ Symbol() string\l+ Execute(left,right) (float64,error)\l}"];
+  OperationFactory [label="{OperationFactory (interface)|+ Create(kind string) Operation\l}"];
+  Logger [label="{Logger (interface)|+ Printf(format, ...any)\l}"];
+
+  Calculator [label="{Calculator|- factory OperationFactory\l- logger Logger\l|+ Calculate(request) Result\l}"];
+  LoggingDecorator [label="{LoggingDecorator|- next Operation\l- logger Logger\l|+ Execute(left,right) (float64,error)\l}"];
+  AddStrategy [label="{AddStrategy|+ Execute(...)\l}"];
+  SubtractStrategy [label="{SubtractStrategy|+ Execute(...)\l}"];
+  MultiplyStrategy [label="{MultiplyStrategy|+ Execute(...)\l}"];
+  DivideStrategy [label="{DivideStrategy|+ Execute(...)\l}"];
+  PowerStrategy [label="{PowerStrategy|+ Execute(...)\l}"];
+  FactoryImpl [label="{operationFactory|+ Create(kind string) Operation\l}"];
+  Request [label="{Request|operation\lleft\lright\lprecision\lverbose\l}"];
+  Result [label="{Result|operation\lsymbol\lleft\lright\lvalue\lprecision\l}"];
+
+  Calculator -> OperationFactory [label="uses"];
+  Calculator -> Logger [label="optional"];
+  Calculator -> Request [label="input"];
+  Calculator -> Result [label="output"];
+  LoggingDecorator -> Operation [label="wraps"];
+  LoggingDecorator -> Logger [label="writes"];
+  FactoryImpl -> OperationFactory [arrowhead="empty"];
+  AddStrategy -> Operation [arrowhead="empty"];
+  SubtractStrategy -> Operation [arrowhead="empty"];
+  MultiplyStrategy -> Operation [arrowhead="empty"];
+  DivideStrategy -> Operation [arrowhead="empty"];
+  PowerStrategy -> Operation [arrowhead="empty"];
+}

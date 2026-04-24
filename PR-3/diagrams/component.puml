@@ -1,0 +1,29 @@
+@startuml
+package "CLI" {
+  [cmd/app/main.go] as Main
+}
+
+package "Application layer" {
+  [internal/app] as App
+  [internal/service] as Service
+}
+
+package "Patterns" {
+  [Factory Method] as Factory
+  [Strategies] as Strategies
+  [Decorator] as Decorator
+}
+
+package "Domain" {
+  [Request/Result/Interfaces] as Domain
+}
+
+Main --> App : demo
+Main --> Service : calculate
+Service --> Factory : create strategy
+Service --> Decorator : optional logging
+Factory --> Strategies : instantiate
+Service --> Domain
+Decorator --> Domain
+Strategies --> Domain
+@enduml

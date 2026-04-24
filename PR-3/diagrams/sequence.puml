@@ -1,0 +1,20 @@
+@startuml
+actor User
+participant "main.go" as Main
+participant "Calculator" as Calc
+participant "OperationFactory" as Factory
+participant "LoggingDecorator" as Decorator
+participant "Strategy" as Strategy
+
+User -> Main : app -op pow -a 2 -b 8 -verbose
+Main -> Calc : Calculate(request)
+Calc -> Factory : Create("pow")
+Factory --> Calc : PowerStrategy
+Calc -> Decorator : NewLoggingDecorator(strategy, logger)
+Calc -> Decorator : Execute(2, 8)
+Decorator -> Strategy : Execute(2, 8)
+Strategy --> Decorator : 256
+Decorator --> Calc : 256
+Calc --> Main : Result
+Main --> User : 2 ^ 8 = 256
+@enduml

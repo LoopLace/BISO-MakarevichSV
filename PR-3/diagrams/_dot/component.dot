@@ -1,0 +1,42 @@
+
+digraph G {
+  graph [rankdir=LR, splines=polyline, nodesep=0.6, ranksep=1.0, pad=0.2];
+  node [shape=component, fontsize=11, fontname="DejaVu Sans"];
+  edge [fontsize=10, fontname="DejaVu Sans"];
+
+  subgraph cluster_cli {
+    label="CLI";
+    style="rounded";
+    Main [label="cmd/app/main.go"];
+  }
+
+  subgraph cluster_app {
+    label="Application layer";
+    style="rounded";
+    App [label="internal/app"];
+    Service [label="internal/service"];
+  }
+
+  subgraph cluster_patterns {
+    label="Patterns";
+    style="rounded";
+    Factory [label="Factory Method"];
+    Strategies [label="Strategies"];
+    Decorator [label="Decorator"];
+  }
+
+  subgraph cluster_domain {
+    label="Domain";
+    style="rounded";
+    Domain [label="Request / Result / Interfaces"];
+  }
+
+  Main -> App [label="demo"];
+  Main -> Service [label="calculate"];
+  Service -> Factory [label="create strategy"];
+  Service -> Decorator [label="optional logging"];
+  Factory -> Strategies [label="instantiate"];
+  Service -> Domain;
+  Decorator -> Domain [label="depends on"];
+  Strategies -> Domain [label="implements"];
+}

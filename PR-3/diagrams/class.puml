@@ -1,0 +1,53 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+interface Operation {
+  +Name() string
+  +Symbol() string
+  +Execute(left float64, right float64) (float64, error)
+}
+
+interface OperationFactory {
+  +Create(kind string) Operation
+}
+
+interface Logger {
+  +Printf(format string, ...any)
+}
+
+class Calculator {
+  -factory OperationFactory
+  -logger Logger
+  +Calculate(request Request) Result
+}
+
+class LoggingDecorator {
+  -next Operation
+  -logger Logger
+  +Execute(left float64, right float64) (float64, error)
+}
+
+class AddStrategy
+class SubtractStrategy
+class MultiplyStrategy
+class DivideStrategy
+class PowerStrategy
+class operationFactory
+class Request
+class Result
+
+Operation <|.. AddStrategy
+Operation <|.. SubtractStrategy
+Operation <|.. MultiplyStrategy
+Operation <|.. DivideStrategy
+Operation <|.. PowerStrategy
+Operation <|.. LoggingDecorator
+OperationFactory <|.. operationFactory
+
+Calculator --> OperationFactory : uses
+Calculator --> Logger : optional
+LoggingDecorator --> Operation : wraps
+LoggingDecorator --> Logger : writes
+Calculator --> Request
+Calculator --> Result
+@enduml

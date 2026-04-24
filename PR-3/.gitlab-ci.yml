@@ -1,0 +1,56 @@
+image: golang:1.23
+
+stages:
+  - lint
+  - sast
+  - test
+  - build
+
+variables:
+  GOBIN: "$CI_PROJECT_DIR/.bin"
+
+before_script:
+  - mkdir -p artifacts
+  - go mod download
+
+lint:
+  stage: lint
+  script:
+    - go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.64.8
+    - "$GOBIN/golangci-lint" run ./...
+  artifacts:
+    when: always
+    paths:
+      - .golangci.yml
+    expire_in: 1 week
+
+sast:
+  stage: sast
+  script:
+    - go install github.com/securego/gosec/v2/cmd/gosec@v2.22.2
+    - "$GOBIN/gosec" ./...
+  artifacts:
+    when: always
+    expire_in: 1 week
+
+test:
+  stage: test
+  script:
+    - go test -v -race -coverprofile=artifacts/coverage.out ./...
+    - go tool cover -func=artifacts/coverage.out | tee artifacts/coverage.txt
+  artifacts:
+    when: always
+    paths:
+      - artifacts/coverage.out
+      - artifacts/coverage.txt
+    expire_in: 1 week
+
+build:
+  stage: build
+  script:
+    - go build -o artifacts/app ./cmd/app
+  artifacts:
+    when: always
+    paths:
+      - artifacts/app
+    expire_in: 1 week

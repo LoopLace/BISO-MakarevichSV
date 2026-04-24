@@ -1,0 +1,25 @@
+
+digraph G {
+  graph [rankdir=LR, splines=polyline, nodesep=0.7, ranksep=0.7, pad=0.2];
+  node [shape=box, fontsize=11, fontname="DejaVu Sans", style="rounded"];
+  edge [fontsize=10, fontname="DejaVu Sans"];
+
+  User [shape=box, label="User"];
+  Main [label="main.go"];
+  Calc [label="Calculator"];
+  Factory [label="OperationFactory"];
+  Decorator [label="LoggingDecorator"];
+  Strategy [label="PowerStrategy"];
+
+  User -> Main [label="app -op pow -a 2 -b 8 -verbose"];
+  Main -> Calc [label="Calculate(request)"];
+  Calc -> Factory [label="Create(\"pow\")"];
+  Factory -> Calc [label="PowerStrategy"];
+  Calc -> Decorator [label="NewLoggingDecorator(...)"];
+  Calc -> Decorator [label="Execute(2, 8)"];
+  Decorator -> Strategy [label="Execute(2, 8)"];
+  Strategy -> Decorator [label="256"];
+  Decorator -> Calc [label="256"];
+  Calc -> Main [label="Result"];
+  Main -> User [label="2 ^ 8 = 256"];
+}
